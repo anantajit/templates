@@ -14,13 +14,13 @@
   [This is a big deal],
   subline: [You have 10 minutes.],
   colors: (
-    fill: red,
-    footer: black
+    fill: blue,
+    body: white,
+    footer: white
   ),
 )
 
 #template.prose[Sample Slide][
-  Hello World
 ]
 
 #template.callout([asdf])

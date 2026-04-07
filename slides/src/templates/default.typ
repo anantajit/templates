@@ -27,7 +27,7 @@
 #let init(doc, numbered: false, footer: none, presenter: none) = {
   show: doc => core.init(doc)
 
-  set text(font: ("Apple SD Gothic Neo", "Arial"))
+  set text(font: ("Apple SD Gothic Neo", "Noto Sans", "Arial"))
 
   if presenter != none {
     presenter-state.update(presenter)
@@ -243,6 +243,7 @@
   subline: none,
   colors: (
     fill: white,
+    body: black,
     footer: eastern
   ),
   attribution: [],
@@ -255,6 +256,7 @@
   })
 
   slide({
+      set text(fill: colors.body)
       align(center + horizon,
         oneliner.fit-to-width(text(weight: "extrabold", message))
       )
