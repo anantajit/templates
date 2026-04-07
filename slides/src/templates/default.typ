@@ -4,6 +4,36 @@
 */
 
 #import "@preview/polylux:0.4.0": *
+#import "../core.typ" as core
+
+#let init(doc, numbered: false, footer: none) = {
+  show: doc => core.init(doc)
+
+  set text(font: ("Apple SD Gothic Neo", "Arial"))
+
+  set page(
+    footer: if (footer == none) {
+      context {
+        set text(size: 16pt, fill: eastern)
+
+        []
+        h(1fr)
+        [#counter(page).display("1") of #counter(page).final().at(0)]
+
+        align(center + bottom, 
+          box(
+            inset: 0.25em,
+            text(12pt)[#sym.copyright #datetime.today().year(). All Rights Reserved.]
+          )
+        )
+      }
+    } else {
+      footer
+    }
+  )
+
+  doc
+}
 
 /*
  * Cover slide used to open a deck and establish context.
@@ -23,21 +53,26 @@
   presenter: [Anantajit Subrahmanya],
   graphic: none,
 ) = {
-  set text(font: "Adwaita Sans")
+  // Footer disabled for only the title slide
+  set page(footer: none)
 
   slide(
     // Placeholder template
-    if graphic != none {
-      // With a graphic
-      image(graphic)
-    } else {
-      align(left + horizon)[
-        #text(headline, size: 48pt)
-        #linebreak()
-        #text(subtitle, size: 24pt)
-        #linebreak()
-        #date
-      ]
+    {
+      if graphic != none {
+        // With a graphic
+        image(graphic)
+      } else {
+        align(left + horizon)[
+          #text(headline, size: 48pt)
+          #linebreak()
+          #h(8pt)
+          #text(subtitle, size: 24pt)
+          #linebreak()
+          #h(8pt)
+          #date
+        ]
+      }
     }
   )
 }
@@ -55,7 +90,8 @@
 ) = {}
 
 /*
- * Agenda slide used to show deck structure and progress.
+ * Agenda slide used to show deck structure and progress. Inherits from section,
+ * with a manual override option.
  * Args:
  * - headline: Agenda title.
  * - sections: Ordered list of section labels.
@@ -72,28 +108,21 @@
  * Args:
  * - headline: Action title for the slide.
  * - body: Main paragraph content.
- * - note: Optional short note/callout near the body.
+ * - callout: Optional emphasized aside near the body.
  * - footnote: Optional footer note for caveats/definitions.
  */
 #let prose(
   headline,
   body,
-  note: [],
-  footnote: [],
-) = {}
+  footnote: none,
+) = {
 
-/*
- * Bullet slide for concise findings, claims, or action points.
- * Args:
- * - headline: Action title for the slide.
- * - items: Ordered or unordered bullet items.
- * - callout: Optional emphasized takeaway line.
- */
-#let bullets(
-  headline,
-  items: (),
-  callout: [],
-) = {}
+  slide()[
+    = #text(size: 28pt, headline)
+
+    #body
+  ]
+}
 
 /*
  * Two-column slide for comparison or parallel arguments.
@@ -103,7 +132,8 @@
  * - right: Content for the right column.
  * - left_label: Optional header for the left column.
  * - right_label: Optional header for the right column.
- * - note: Optional shared note beneath the columns.
+ * - callout: Optional emphasized takeaway across both columns.
+ * - footnote: Optional footer note for caveats/definitions.
  */
 #let split(
   headline,
@@ -111,7 +141,8 @@
   right,
   left_label: [],
   right_label: [],
-  note: [],
+  callout: [],
+  footnote: [],
 ) = {}
 
 /*
@@ -139,14 +170,16 @@
  * - headline: Action title for the slide.
  * - content: Main exhibit content (chart/table).
  * - annotations: Optional callouts layered over the exhibit.
- * - notes: Optional interpretation/method notes.
+ * - callout: Optional short interpretation note near the exhibit.
+ * - footnote: Optional footer note for caveats/definitions.
  * - source: Source line for data provenance.
  */
 #let exhibit(
   headline,
   content,
   annotations: (),
-  notes: [],
+  callout: [],
+  footnote: [],
   source: [],
 ) = {}
 
@@ -156,13 +189,13 @@
  * - media: Full-bleed visual asset.
  * - caption: Optional short caption.
  * - label: Optional small top/bottom label.
- * - credit: Optional photographer/asset credit.
+ * - source: Optional photographer/asset credit line.
  */
 #let visual(
   media,
   caption: [],
   label: [],
-  credit: [],
+  source: [],
 ) = {}
 
 /*
@@ -184,13 +217,15 @@
  * - headline: Action title for the slide.
  * - content: Framework body (2x2, process, tree, roadmap, etc.).
  * - legend: Optional legend for symbols/colors.
- * - notes: Optional explanatory notes.
+ * - callout: Optional interpretation note near the framework.
+ * - footnote: Optional footer note for caveats/definitions.
  */
 #let canvas(
   headline,
   content,
   legend: [],
-  notes: [],
+  callout: [],
+  footnote: [],
 ) = {}
 
 /*
@@ -200,12 +235,14 @@
  * - tiles: 3-5 summary/action tiles.
  * - owner: Optional owner/accountable person.
  * - due: Optional due date or timing marker.
- * - note: Optional closing note.
+ * - callout: Optional closing takeaway line.
+ * - footnote: Optional footer note for caveats/definitions.
  */
 #let summary(
   headline,
   tiles: (),
   owner: [],
   due: [],
-  note: [],
+  callout: [],
+  footnote: [],
 ) = {}

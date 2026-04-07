@@ -1,8 +1,7 @@
-#import "core.typ": *
 #import "templates/default.typ" as template
 
-// Place code for slides here 
-#show: doc => slides(doc)
+// Initialize the template
+#show: doc => template.init(doc)
 
 #template.cover(
   [Title Slide],
@@ -11,3 +10,6 @@
   // graphic: "/assets/image.jpg"
 )
 
+#template.prose[Sample Slide][
+  Hello World
+]
