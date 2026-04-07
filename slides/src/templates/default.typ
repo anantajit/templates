@@ -5,33 +5,45 @@
 
 #import "@preview/polylux:0.4.0": *
 #import "../core.typ" as core
+#import "@preview/one-liner:0.3.0" as oneliner
 
-#let init(doc, numbered: false, footer: none) = {
+#let presenter-state = state("presenter", "")
+
+#let default_footer() = {
+    set text(size: 16pt)
+
+    []
+    h(1fr)
+    [#counter(page).display("1") of #counter(page).final().at(0)]
+
+    align(center + bottom, 
+      box(
+        inset: 0.25em,
+        text(12pt)[#sym.copyright #presenter-state.get() #datetime.today().year(). All Rights Reserved.]
+      )
+    )
+}
+
+#let init(doc, numbered: false, footer: none, presenter: none) = {
   show: doc => core.init(doc)
 
   set text(font: ("Apple SD Gothic Neo", "Arial"))
 
+  if presenter != none {
+    presenter-state.update(presenter)
+  }
+
   set page(
     footer: if (footer == none) {
-      context {
-        set text(size: 16pt, fill: eastern)
-
-        []
-        h(1fr)
-        [#counter(page).display("1") of #counter(page).final().at(0)]
-
-        align(center + bottom, 
-          box(
-            inset: 0.25em,
-            text(12pt)[#sym.copyright #datetime.today().year(). All Rights Reserved.]
-          )
-        )
+      set text(fill: eastern)
+      context{
+        default_footer()
       }
     } else {
       footer
     }
   )
-
+  
   doc
 }
 
@@ -49,20 +61,22 @@
   headline, 
   subtitle: [],
   project: [],
-  date: datetime.today().display(),
+  date: datetime.today().display("[weekday], [month repr:long] [day padding:none], [year]"),
   presenter: [Anantajit Subrahmanya],
   graphic: none,
 ) = {
   // Footer disabled for only the title slide
   set page(footer: none)
 
+  let faded-rainbow = gradient.conic(
+    ..color.map.rainbow.map(c => c.transparentize(50%))
+  )
+
   slide(
     // Placeholder template
     {
-      if graphic != none {
-        // With a graphic
-        image(graphic)
-      } else {
+      align(horizon, {grid(
+        columns: (auto, auto),
         align(left + horizon)[
           #text(headline, size: 48pt)
           #linebreak()
@@ -70,9 +84,28 @@
           #text(subtitle, size: 24pt)
           #linebreak()
           #h(8pt)
-          #date
-        ]
+          #text(size: 16pt, date)
+          #line(length: 100%)
+          #v(-0.5em)
+          #h(8pt)
+          #text(presenter, size: 20pt)
+        ], if (graphic != none) {
+          box(
+            box(
+              image(graphic, width: 256pt),
+              inset: 0.5em,
+              radius: 1em,
+              stroke: (
+              paint: faded-rainbow,
+              thickness: 3pt),
+              clip: true,
+            ),
+            inset: 1em
+          )
+        }
+      )
       }
+    )
     }
   )
 }
@@ -119,7 +152,7 @@
 
   slide()[
     = #text(size: 28pt, headline)
-
+    #v(0.5em)
     #body
   ]
 }
@@ -207,9 +240,28 @@
  */
 #let callout(
   message,
-  subline: [],
+  subline: none,
+  colors: (
+    fill: white,
+    footer: eastern
+  ),
   attribution: [],
-) = {}
+) = {
+  set page(fill: colors.fill, footer: {
+    set text(fill: colors.footer)
+    context {
+      default_footer()
+    }
+  })
+
+  slide({
+      align(center + horizon,
+        oneliner.fit-to-width(text(weight: "extrabold", message))
+      )
+      align(center, subline)
+    }
+  )
+}
 
 /*
  * Framework canvas for structured reasoning models.

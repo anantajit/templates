@@ -10,6 +10,17 @@
   // graphic: "/assets/image.jpg"
 )
 
+#template.callout(
+  [This is a big deal],
+  subline: [You have 10 minutes.],
+  colors: (
+    fill: red,
+    footer: black
+  ),
+)
+
 #template.prose[Sample Slide][
   Hello World
 ]
+
+#template.callout([asdf])
