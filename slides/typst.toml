@@ -1,0 +1,8 @@
+[package]
+name = "slides"
+version = "0.1.0"
+entrypoint = "src/lib.typ"
+authors = ["Anantajit Subrahmanya"]
+license = "MIT"
+description = "Presentation slide template helpers built on Polylux."
+compiler = "0.13.0"

@@ -1,16 +1,16 @@
-#import "templates/default.typ" as template
+#import "@local/slides:0.1.0": default
 
 // Initialize the template
-#show: doc => template.init(doc)
+#show: doc => default.init(doc)
 
-#template.cover(
+#default.cover(
   [Title Slide],
   subtitle: [Subtitle],
   project: [Project Title],
   // graphic: "/assets/image.jpg"
 )
 
-#template.callout(
+#default.callout(
   [This is a big deal],
   subline: [You have 10 minutes.],
   colors: (
@@ -20,7 +20,7 @@
   ),
 )
 
-#template.prose[Sample Slide][
+#default.prose[Sample Slide][
 ]
 
-#template.callout([asdf])
+#default.callout([asdf])
