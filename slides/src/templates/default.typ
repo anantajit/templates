@@ -10,7 +10,7 @@
 #let presenter-state = state("presenter", "")
 
 #let default_footer() = {
-    set text(size: 16pt)
+    set text(size: 14pt)
 
     []
     h(1fr)
@@ -151,7 +151,7 @@
 ) = {
 
   slide()[
-    = #text(size: 28pt, headline)
+    = #headline
     #v(0.5em)
     #body
   ]
@@ -163,20 +163,32 @@
  * - headline: Action title for the slide.
  * - left: Content for the left column.
  * - right: Content for the right column.
- * - left_label: Optional header for the left column.
- * - right_label: Optional header for the right column.
- * - callout: Optional emphasized takeaway across both columns.
- * - footnote: Optional footer note for caveats/definitions.
  */
 #let split(
   headline,
   left,
   right,
-  left_label: [],
-  right_label: [],
-  callout: [],
+  columns: (auto, auto),
   footnote: [],
-) = {}
+) = [
+  = #headline
+  #v(0.5em)
+
+  #grid(
+    columns: columns,
+    [
+      #left
+    ],
+    [
+      #right
+    ]
+  )
+
+  #align(bottom + center)[
+    #set text(12pt)
+    #footnote
+  ]
+]
 
 /*
  * Figure slide for text + media storytelling.
@@ -190,12 +202,13 @@
  */
 #let figure(
   headline,
-  media,
-  caption: [],
+  figure,
   body: [],
   label: [],
   source: [],
-) = {}
+) = {
+
+}
 
 /*
  * Exhibit slide for data-first content (charts/tables).

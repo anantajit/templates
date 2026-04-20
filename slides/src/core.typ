@@ -2,7 +2,7 @@
 
 #let init(doc) = {
   set page(paper: "presentation-16-9")
-  set text(size: 22pt)
+  set text(size: 18pt)
 
   doc
 }
