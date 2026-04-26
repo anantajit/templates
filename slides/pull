@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+TOML_FILE="$SCRIPT_DIR/typst.toml"
+
+if [[ ! -f "$TOML_FILE" ]]; then
+  printf 'Error: typst.toml not found at %s\n' "$TOML_FILE" >&2
+  exit 1
+fi
+
+PACKAGE_NAME="$(awk -F '"' '$1 ~ /^name[[:space:]]*=[[:space:]]*$/ {print $2; exit}' "$TOML_FILE")"
+PACKAGE_VERSION="$(awk -F '"' '$1 ~ /^version[[:space:]]*=[[:space:]]*$/ {print $2; exit}' "$TOML_FILE")"
+
+if [[ -z "$PACKAGE_NAME" || -z "$PACKAGE_VERSION" ]]; then
+  printf 'Error: could not read package name/version from %s\n' "$TOML_FILE" >&2
+  exit 1
+fi
+
+if [[ -n "${TYPST_LOCAL_REPO:-}" ]]; then
+  LOCAL_REPO="$TYPST_LOCAL_REPO"
+else
+  case "$(uname -s)" in
+    Darwin)
+      LOCAL_REPO="$HOME/Library/Application Support/typst/packages/local"
+      ;;
+    Linux)
+      LOCAL_REPO="${XDG_DATA_HOME:-$HOME/.local/share}/typst/packages/local"
+      ;;
+    *)
+      printf 'Error: unsupported OS (%s). Supported: macOS, Linux.\n' "$(uname -s)" >&2
+      exit 1
+      ;;
+  esac
+fi
+
+SOURCE_DIR="$LOCAL_REPO/$PACKAGE_NAME/$PACKAGE_VERSION"
+if [[ ! -d "$SOURCE_DIR" ]]; then
+  printf 'Error: installed package not found at %s\n' "$SOURCE_DIR" >&2
+  printf 'Tip: run ./install first to create the local package.\n' >&2
+  exit 1
+fi
+
+if command -v rsync >/dev/null 2>&1; then
+  rsync -a --delete \
+    --exclude '.git/' \
+    --exclude '.DS_Store' \
+    --exclude '.direnv/' \
+    "$SOURCE_DIR/" "$SCRIPT_DIR/"
+else
+  cp -R "$SOURCE_DIR/." "$SCRIPT_DIR/"
+  rm -rf "$SCRIPT_DIR/.git" "$SCRIPT_DIR/.direnv"
+  printf 'Warning: rsync not found, so deletions in the installed package were not mirrored.\n' >&2
+fi
+
+printf 'Pulled package changes from:\n  %s\n' "$SOURCE_DIR"

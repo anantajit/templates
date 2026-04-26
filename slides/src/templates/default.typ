@@ -170,25 +170,27 @@
   right,
   columns: (auto, auto),
   footnote: [],
-) = [
-  = #headline
-  #v(0.5em)
+) = {
+  slide()[
+    = #headline
+    #v(0.5em)
 
-  #grid(
-    columns: columns,
-    [
-      #left
-    ],
-    [
-      #right
+    #grid(
+      columns: columns,
+      [
+        #left
+      ],
+      [
+        #right
+      ]
+    )
+
+    #align(bottom + center)[
+      #set text(12pt)
+      #footnote
     ]
-  )
-
-  #align(bottom + center)[
-    #set text(12pt)
-    #footnote
   ]
-]
+}
 
 /*
  * Figure slide for text + media storytelling.
