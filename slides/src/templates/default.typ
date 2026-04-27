@@ -149,12 +149,12 @@
   body,
   footnote: none,
 ) = {
-
-  slide()[
-    = #headline
-    #v(0.5em)
-    #body
-  ]
+  grid(
+    rows: (auto, 1fr),
+    row-gutter: 1.5em,
+    [= #headline],
+    [#body]
+  )
 }
 
 /*
@@ -172,24 +172,29 @@
   footnote: [],
 ) = {
   slide()[
-    = #headline
-    #v(0.5em)
-
     #grid(
-      columns: columns,
+      rows: (auto, 1fr),
+      row-gutter: 0.5em,
+      [= #headline],
       [
-        #left
-      ],
-      [
-        #right
-      ]
-    )
+        #grid(
+          columns: columns,
+          [
+            #left
+          ],
+          [
+            #right
+          ]
+        )
 
-    #align(bottom + center)[
-      #set text(12pt)
-      #footnote
-    ]
-  ]
+        ]
+        )
+
+        #align(bottom + center)[
+          #set text(12pt)
+          #footnote
+        ]
+      ]
 }
 
 /*
