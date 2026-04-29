@@ -149,11 +149,13 @@
   body,
   footnote: none,
 ) = {
-  grid(
-    rows: (auto, 1fr),
-    row-gutter: 1.5em,
-    [= #headline],
-    [#body]
+  slide(
+    grid(
+      rows: (auto, 1fr),
+      row-gutter: 1.5em,
+      [= #headline],
+      [#body]
+    )
   )
 }
 
