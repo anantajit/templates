@@ -10,6 +10,7 @@
   shadow_fill: luma(80%).transparentize(75%),
   shadow_layers: 4,
   shadow_spread: 2pt,
+  alignment: horizon + center,
 ) = layout(size => {
   let frame = (x: 0pt, y: 0pt, w: size.width, h: size.height)
   let sx = shadow_offset.at("x")
@@ -45,7 +46,8 @@
         fill: fill,
         stroke: stroke,
         clip: clip,
-      )[#body]
+        align(alignment, body)
+      )
     ]
   ]
 })
@@ -55,6 +57,7 @@
   margin: 6pt,
   pane-fn: pane,
   fill: none,
+  start-vertical: true,
   ..children,
 ) = {
   let bodies = children.pos()
@@ -102,7 +105,7 @@
       (
         rects: (),
         rem: (x: 0pt, y: 0pt, w: size.width, h: size.height),
-        vertical: true,
+        vertical: start-vertical,
         streak: 0,
       ),
       (acc, i) => {
@@ -132,7 +135,7 @@
           pane-fn.with(fill: pick-fill(i))[#body]
         }
         place(top + left, dx: r.x, dy: r.y)[
-          box(width: r.w, height: r.h)[#pane-body]
+          #box(width: r.w, height: r.h)[#pane-body]
         ]
       }
     ]

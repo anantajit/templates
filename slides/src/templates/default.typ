@@ -174,11 +174,12 @@
   slide()[
     #grid(
       rows: (auto, 1fr),
-      row-gutter: 0.5em,
+      row-gutter: 1em,
       [= #headline],
       [
         #grid(
           columns: columns,
+          column-gutter: 1em,
           [
             #left
           ],
