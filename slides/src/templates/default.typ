@@ -1,7 +1,7 @@
 /*
-* Default presentation layout
-* Interfaces to be implemented by all presentations
-*/
+ * Default presentation layout
+ * Interfaces to be implemented by all presentations
+ */
 
 #import "@preview/polylux:0.4.0": *
 #import "../core.typ" as core
@@ -10,18 +10,16 @@
 #let presenter-state = state("presenter", "")
 
 #let default_footer() = {
-    set text(size: 14pt)
+  set text(size: 14pt)
 
-    []
-    h(1fr)
-    [#counter(page).display("1") of #counter(page).final().at(0)]
+  []
+  h(1fr)
+  [#counter(page).display("1") of #counter(page).final().at(0)]
 
-    align(center + bottom, 
-      box(
-        inset: 0.25em,
-        text(12pt)[#sym.copyright #presenter-state.get() #datetime.today().year(). All Rights Reserved.]
-      )
-    )
+  align(center + bottom, box(
+    inset: 0.25em,
+    text(12pt)[#sym.copyright #presenter-state.get() #datetime.today().year(). All Rights Reserved.],
+  ))
 }
 
 #let init(doc, numbered: false, footer: none, presenter: none) = {
@@ -36,14 +34,14 @@
   set page(
     footer: if (footer == none) {
       set text(fill: eastern)
-      context{
+      context {
         default_footer()
       }
     } else {
       footer
-    }
+    },
   )
-  
+
   doc
 }
 
@@ -58,7 +56,7 @@
  * - graphic: Optional hero image or visual accent.
  */
 #let cover(
-  headline, 
+  headline,
   subtitle: [],
   project: [],
   date: datetime.today().display("[weekday], [month repr:long] [day padding:none], [year]"),
@@ -69,49 +67,51 @@
   set page(footer: none)
 
   let faded-rainbow = gradient.conic(
-    ..color.map.rainbow.map(c => c.transparentize(50%))
+    ..color.map.rainbow.map(c => c.transparentize(50%)),
   )
 
   slide(
     // Placeholder template
     {
-      align(horizon, {grid(
-        columns: (auto, auto),
-        align(left + horizon)[
-          #text(headline, size: 48pt)
-          #linebreak()
-          #h(8pt)
-          #text(subtitle, size: 24pt)
-          #linebreak()
-          #h(8pt)
-          #text(size: 16pt, date)
-          #line(length: 100%)
-          #v(-0.5em)
-          #h(8pt)
-          #text(presenter, size: 20pt)
-        ], if (graphic != none) {
-          box(
+      align(horizon, {
+        grid(
+          columns: (auto, auto),
+          align(left + horizon)[
+            #text(headline, size: 48pt)
+            #linebreak()
+            #h(8pt)
+            #text(subtitle, size: 24pt)
+            #linebreak()
+            #h(8pt)
+            #text(size: 16pt, date)
+            #line(length: 100%)
+            #v(-0.5em)
+            #h(8pt)
+            #text(presenter, size: 20pt)
+          ],
+          if (graphic != none) {
             box(
-              image(graphic, width: 256pt),
-              inset: 0.5em,
-              radius: 1em,
-              stroke: (
-              paint: faded-rainbow,
-              thickness: 3pt),
-              clip: true,
-            ),
-            inset: 1em
-          )
-        }
-      )
-      }
-    )
-    }
+              box(
+                graphic,
+                inset: 0.5em,
+                radius: 1em,
+                stroke: (
+                  paint: faded-rainbow,
+                  thickness: 3pt,
+                ),
+                clip: true,
+              ),
+              inset: 1em,
+            )
+          },
+        )
+      })
+    },
   )
 }
 
 /*
- * Section divider slide used between major chapters. Automatically populates in 
+ * Section divider slide used between major chapters. Automatically populates in
  * the agenda unless otherwise stated.
  * Args:
  * - headline: Section title.
@@ -154,8 +154,8 @@
       rows: (auto, 1fr),
       row-gutter: 1.5em,
       [= #headline],
-      [#body]
-    )
+      [#body],
+    ),
   )
 }
 
@@ -193,12 +193,12 @@
           ]
         )
 
-        ],
-        align(bottom + center)[
-          #set text(12pt)
-          #footnote
-        ]
-      )
+      ],
+      align(bottom + center)[
+        #set text(12pt)
+        #footnote
+      ],
+    )
   ]
 }
 
@@ -218,9 +218,7 @@
   body: [],
   label: [],
   source: [],
-) = {
-
-}
+) = {}
 
 /*
  * Exhibit slide for data-first content (charts/tables).
@@ -269,7 +267,7 @@
   colors: (
     fill: white,
     body: black,
-    footer: eastern
+    footer: eastern,
   ),
   attribution: [],
 ) = {
@@ -281,13 +279,10 @@
   })
 
   slide({
-      set text(fill: colors.body)
-      align(center + horizon,
-        oneliner.fit-to-width(text(weight: "extrabold", message))
-      )
-      align(center, subline)
-    }
-  )
+    set text(fill: colors.body)
+    align(center + horizon, oneliner.fit-to-width(text(weight: "extrabold", message)))
+    align(center, subline)
+  })
 }
 
 /*
