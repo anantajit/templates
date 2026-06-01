@@ -27,7 +27,7 @@
 #let init(doc, numbered: false, footer: none, presenter: none) = {
   show: doc => core.init(doc)
 
-  set text(font: ("Apple SD Gothic Neo", "Noto Sans", "Arial"))
+  set text(font: ("Apple SD Gothic Neo", "Roboto", "Noto Sans", "Arial"))
 
   if presenter != none {
     presenter-state.update(presenter)
@@ -175,9 +175,12 @@
 ) = {
   slide()[
     #grid(
-      rows: (auto, 1fr),
-      row-gutter: 1em,
-      [= #headline],
+      rows: (auto, 1fr, auto),
+      row-gutter: 0em,
+      [
+        = #headline
+        #v(1em)
+      ],
       [
         #grid(
           columns: columns,
@@ -190,14 +193,13 @@
           ]
         )
 
-        ]
-        )
-
-        #align(bottom + center)[
+        ],
+        align(bottom + center)[
           #set text(12pt)
           #footnote
         ]
-      ]
+      )
+  ]
 }
 
 /*
