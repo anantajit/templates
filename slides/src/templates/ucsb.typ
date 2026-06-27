@@ -6,10 +6,12 @@
 #import "../core.typ" as core
 #import "@preview/one-liner:0.3.0" as oneliner
 
-#let numbered-state = state("ucsb-numbered", false)
+#let numbered-state = state("ucsb-numbered", true)
 #let title-state = state("ucsb-title", none)
 #let presenter-state = state("ucsb-presenter", none)
 #let affiliation-state = state("ucsb-affiliation", none)
+#let presenter-set-state = state("ucsb-presenter-set", false)
+#let affiliation-set-state = state("ucsb-affiliation-set", false)
 #let sections-state = state("ucsb-sections", ())
 
 #let get-numbered() = context {
@@ -85,6 +87,8 @@
   title-state.update(title)
   presenter-state.update(presenter)
   affiliation-state.update(affiliation)
+  presenter-set-state.update(presenter != none)
+  affiliation-set-state.update(affiliation != none)
 
   set page(footer: {
     set text(fill: eastern)
@@ -107,10 +111,15 @@
   collaborators: none,
   venue: none,
   date: none,
+  // Extra decoration
+  separate-collaborators: false,
 ) = {
+  let using-state-presenter = presenter == none
+  let using-state-affiliation = affiliation == none
+
   let resolved-headline = if headline == none { get-title() } else { headline }
-  let resolved-presenter = if presenter == none { get-presenter() } else { presenter }
-  let resolved-affiliation = if affiliation == none { get-affiliation() } else { affiliation }
+  let resolved-presenter = if using-state-presenter { get-presenter() } else { presenter }
+  let resolved-affiliation = if using-state-affiliation { get-affiliation() } else { affiliation }
 
   // Footer disabled for only the title slide
   set page(fill: colors.deep_ocean.color, footer: none)
@@ -128,7 +137,7 @@
         #set align(left + top)
         #if venue != none {
           h(1pt)
-          text(size: 18pt, smallcaps(venue))
+          text(size: 18pt, upper(venue))
         }
 
         #v(-12pt)
@@ -138,15 +147,23 @@
         #text(size: 24pt, subtitle)
       ][
         #set align(right + bottom)
-        #if resolved-presenter != none and resolved-affiliation != none {
-          text(size: 16pt, [#resolved-presenter, #resolved-affiliation], weight: "bold", fill: colors.sun_gold.color)
-        } else if resolved-presenter != none {
-          text(size: 16pt, resolved-presenter, weight: "bold", fill: colors.sun_gold.color)
-        } else if resolved-affiliation != none {
-          text(size: 16pt, resolved-affiliation, weight: "bold", fill: colors.sun_gold.color)
+        #context {
+          let has-presenter = if using-state-presenter { presenter-set-state.get() } else { true }
+          let has-affiliation = if using-state-affiliation { affiliation-set-state.get() } else { true }
+
+          if has-presenter and has-affiliation {
+            text(size: 16pt, [#resolved-presenter, #resolved-affiliation], weight: "bold", fill: colors.sun_gold.color)
+          } else if has-presenter {
+            text(size: 16pt, resolved-presenter, weight: "bold", fill: colors.sun_gold.color)
+          } else if has-affiliation {
+            text(size: 16pt, resolved-affiliation, weight: "bold", fill: colors.sun_gold.color)
+          }
         }
 
         #if collaborators != none {
+          if separate-collaborators {
+            line(length: 50%, stroke: colors.deep_ocean.contrast)
+          }
           for person in collaborators {
             let name = person.at("name", default: none)
             let person-affiliation = person.at("affiliation", default: none)
@@ -157,6 +174,7 @@
             } else if person-affiliation != none {
               text(size: 16pt, person-affiliation)
             }
+            linebreak()
           }
         }
       ]
@@ -176,7 +194,6 @@
 }
 
 /*
- * TODO
  * Section divider slide used between major chapters. Automatically populates in
  * the agenda unless otherwise stated.
  */
@@ -308,7 +325,7 @@
     grid(
       rows: (auto, 1fr),
       row-gutter: 1.5em,
-      [= #headline],
+      [= #text(fill: colors.deep_ocean.color)[#headline]],
       [#body],
     ),
   )
@@ -332,10 +349,7 @@
     #grid(
       rows: (auto, 1fr, auto),
       row-gutter: 0em,
-      [
-        = #headline
-        #v(1em)
-      ],
+      [= #text(fill: colors.deep_ocean.color)[#headline] #v(1em)],
       [
         #grid(
           columns: columns,
@@ -385,22 +399,18 @@
 #let callout(
   message,
   subline: none,
-  colors: (
-    fill: white,
-    body: black,
-    footer: eastern,
-  ),
+  colors: color,
   attribution: [],
 ) = {
-  set page(fill: colors.fill, footer: {
-    set text(fill: colors.footer)
+  set page(fill: colors.color, footer: {
+    set text(fill: colors.contrast)
     context {
       footer()
     }
   })
 
   slide({
-    set text(fill: colors.body)
+    set text(fill: colors.contrast)
     align(center + horizon, oneliner.fit-to-width(text(weight: "extrabold", message)))
     align(center, subline)
   })
