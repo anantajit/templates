@@ -34,6 +34,33 @@
   sections-state.get()
 }
 
+#let pause = [#metadata("ucsb-pause")]
+
+#let is-pause-marker(it) = (
+  type(it) == content and (
+    it.func() == metadata and it.fields().at("value", default: none) == "ucsb-pause"
+    or it.has("children") and it.children.any(is-pause-marker)
+  )
+)
+
+#let apply-pauses(body) = {
+  let children = if type(body) == content and body.has("children") { body.children } else { (body,) }
+  let chunks = ()
+  let current = []
+  let paused = false
+  for child in children {
+    if is-pause-marker(child) {
+      if current != [] { chunks.push((paused, current)) }
+      current = []
+      paused = true
+    } else {
+      current += child
+    }
+  }
+  if current != [] { chunks.push((paused, current)) }
+  for (paused, body) in chunks { if paused { later(body) } else { body } }
+}
+
 #let footer() = {
   let is-numbered = numbered-state.get()
   let presenter = presenter-state.get()
@@ -321,14 +348,13 @@
   headline,
   body,
 ) = {
-  slide(
-    grid(
-      rows: (auto, 1fr),
-      row-gutter: 1.5em,
-      [= #text(fill: colors.deep_ocean.color)[#headline]],
-      [#body],
-    ),
-  )
+  slide[
+    #grid(rows: (auto, 1fr), row-gutter: 1.5em)[
+    = #text(fill: colors.deep_ocean.color)[#headline]
+    ][
+      #apply-pauses(body)
+    ]
+  ]
 }
 
 /*
