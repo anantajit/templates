@@ -37,10 +37,11 @@
 #let pause = [#metadata("ucsb-pause")]
 
 #let is-pause-marker(it) = (
-  type(it) == content and (
-    it.func() == metadata and it.fields().at("value", default: none) == "ucsb-pause"
-    or it.has("children") and it.children.any(is-pause-marker)
-  )
+  type(it) == content
+    and (
+      it.func() == metadata and it.fields().at("value", default: none) == "ucsb-pause"
+        or it.has("children") and it.children.any(is-pause-marker)
+    )
 )
 
 #let apply-pauses(body) = {
@@ -105,8 +106,8 @@
   light_mist: (color: rgb(218, 230, 230), contrast: rgb(61, 73, 82)),
 )
 
-#let init(doc, numbered: false, title: none, presenter: none, affiliation: none) = {
-  show: doc => core.init(doc)
+#let init(doc, numbered: false, title: none, presenter: none, affiliation: none, format: "presentation-16-9") = {
+  show: doc => core.init(doc, format: format)
 
   set text(font: ("Avenir", "Apple SD Gothic Neo", "Roboto", "Noto Sans", "Arial"))
 
@@ -350,7 +351,7 @@
 ) = {
   slide[
     #grid(rows: (auto, 1fr), row-gutter: 1.5em)[
-    = #text(fill: colors.deep_ocean.color)[#headline]
+      = #text(fill: colors.deep_ocean.color)[#headline]
     ][
       #apply-pauses(body)
     ]

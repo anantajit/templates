@@ -22,8 +22,8 @@
   ))
 }
 
-#let init(doc, numbered: false, footer: none, presenter: none) = {
-  show: doc => core.init(doc)
+#let init(doc, numbered: false, footer: none, presenter: none, format: "presentation-16-9") = {
+  show: doc => core.init(doc, format: format)
 
   set text(font: ("Apple SD Gothic Neo", "Roboto", "Noto Sans", "Arial"))
 
